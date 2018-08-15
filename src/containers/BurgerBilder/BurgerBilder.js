@@ -3,6 +3,8 @@ import React, {Component} from 'react';
 import ElementLess  from '../../hoc/ElementLess'
 import Burger  from '../../components/Burger/Burger'
 import BuildControls  from '../../components/Burger/BuildControls/BuildControls'
+import Modal  from '../../components/UI/Modal/Modal'
+import CheckoutSummary  from '../../components/Burger/checkoutSummary/checkoutSummary'
 
 const ING_PRICE = {
     salad: 2.5,
@@ -21,7 +23,8 @@ class BurgerBuilder extends Component {
             meat: 0
         },
         price : 4,
-        purchasable : false
+        purchasable : false,
+        checkout : false
     };
 
 
@@ -74,9 +77,24 @@ class BurgerBuilder extends Component {
         this.setState({purchasable : sum > 0})
     }
 
+    checkoutHandler = () =>{
+        this.setState({
+            checkout : true
+        })
+    };
+
+    closeModalHandler = () =>{
+        this.setState({
+            checkout : false
+        })
+    };
+
+    continueCheckout = () =>{
+       alert('checkout ..........')
+    };
+
     render(){
         let buttonInfo = {...this.state.ingredients};
-
         for(let key in buttonInfo){
             buttonInfo[key] = {
                 less: buttonInfo[key] <= 0,
@@ -86,6 +104,13 @@ class BurgerBuilder extends Component {
 
         return (
             <ElementLess>
+                <Modal show={this.state.checkout} closeModal={this.closeModalHandler}>
+                    <CheckoutSummary
+                        ingredients={this.state.ingredients}
+                        price={this.state.price}
+                        closeModalHandler={this.closeModalHandler}
+                        continueCheckout={this.continueCheckout}/>
+                </Modal>
                 <Burger ingredients={this.state.ingredients}/>
                 <BuildControls
                     buttonInfo = {buttonInfo}
@@ -93,6 +118,7 @@ class BurgerBuilder extends Component {
                     addIngredient={(type) => this.addIngredient(type)}
                     removeIngredient={(type) => this.removeIngredient(type)}
                     purchasable={this.state.purchasable}
+                    checkout={this.checkoutHandler}
                 />
             </ElementLess>
 
